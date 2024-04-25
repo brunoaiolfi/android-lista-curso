@@ -15,9 +15,6 @@ import devandroid.bruno.applistacurso.controller.PessoaController;
 import devandroid.bruno.applistacurso.model.Pessoa;
 
 public class MainActivity extends AppCompatActivity {
-
-    SharedPreferences preferences;
-    public static final String NOME_PREFERENCES = "pref_listacurso";
     Pessoa pessoa;
     PessoaController pessoaController;
     EditText editNome;
@@ -35,11 +32,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        preferences = getSharedPreferences(NOME_PREFERENCES, 0);
-        SharedPreferences.Editor listaVip = preferences.edit();
-
         pessoa = new Pessoa();
-        pessoaController = new PessoaController();
+        pessoaController = new PessoaController(MainActivity.this);
 
         editNome = findViewById(R.id.editNome);
         editSobreNome = findViewById(R.id.editSobreNome);
@@ -50,6 +44,12 @@ public class MainActivity extends AppCompatActivity {
         btnSalvar = findViewById(R.id.btnSalvar);
         btnFinalizar = findViewById(R.id.btnFinalizar);
 
+        Pessoa pessoaReturn = pessoaController.recuperar();
+
+        editNome.setText(pessoaReturn.getPrimeiroNome().toString());
+        editSobreNome.setText(pessoaReturn.getSegundoNome().toString());
+        editNomeCurso.setText(pessoaReturn.getCursoDesejado().toString());
+        editTelefone.setText(pessoaReturn.getTelefoneContato().toString());
         btnLimpar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -57,6 +57,8 @@ public class MainActivity extends AppCompatActivity {
                 editSobreNome.setText("");
                 editNomeCurso.setText("");
                 editTelefone.setText("");
+
+               pessoaController.limpar();
             }
         });
         btnFinalizar.setOnClickListener(new View.OnClickListener() {
@@ -74,15 +76,9 @@ public class MainActivity extends AppCompatActivity {
                 pessoa.setCursoDesejado(editNomeCurso.getText().toString());
                 pessoa.setTelefoneContato(editTelefone.getText().toString());
 
-                pessoaController.salvar(pessoa);
+                Pessoa pessoaResponse = pessoaController.salvar(pessoa);
 
-                listaVip.putString("primeiroNome", pessoa.getPrimeiroNome());
-                listaVip.putString("segundoNome", pessoa.getSegundoNome());
-                listaVip.putString("cursoDesejado", pessoa.getCursoDesejado());
-                listaVip.putString("telefoneContato", pessoa.getTelefoneContato());
-                listaVip.apply();
-
-                Toast.makeText(MainActivity.this, "Salvo "+pessoa.toString(), Toast.LENGTH_LONG).show();
+                Toast.makeText(MainActivity.this, "Salvo "+pessoaResponse.toString(), Toast.LENGTH_LONG).show();
             }
         });
     }

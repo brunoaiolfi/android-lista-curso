@@ -7,9 +7,6 @@ public class Pessoa {
     private String cursoDesejado;
     private String telefoneContato;
 
-    public Pessoa() {
-    }
-
     public String getPrimeiroNome() {
         return primeiroNome;
     }
